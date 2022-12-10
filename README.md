@@ -11,33 +11,13 @@ Pengerjaan soal shift jarkom modul 5 oleh ITA08
 | Brilianti Puspita S.  | `5027201070` |
 
 ## A. topologi
-[buat gambar]
+![](img/topo/topo.png)
 
 ## B. Perhitungan jumlah subnet
-
-| subnet | jumlah IP    | Netmask   |
-| -------| -------------| ----------|
-| A3     |     `701`    |   `/22`   |
-| A6     |     `256`    |   `/23`   |
-| A7     |     `201`    |   `/24`   |
-| A2     |     `63`     |   `/25`   |
-| A1     |     `3`      |   `/29`   |
-| A8     |     `3`      |   `/29`   |
-| A4     |     `2`      |   `/30`   |
-| A5     |     `2`      |   `/30`   |
-|Total   |    `1231`    |   `/21`   |
+![](img/topo/tabel%20subnet.png)
 
 ## Pembagian IP
-| No | Subnet | Network ID | Subnet Mask | Wildcard | IP Broadcast | 
-| :---: | :---: | :---: | :---: | :---: | :---: |
-| 1 | A3 | 192.190.4.0 | 255.255.252.0  | 0.0.3.255 | 192.190.7.255 |
-| 2 | A7 | 192.190.2.0 | 255.255.254.0 | 0.0.1.255 | 192.190.3.255 |
-| 3 | A6 | 192.190.1.0 | 255.255.255.0 | 0.0.0.255 | 192.190.1.255 |
-| 4 | A2 | 192.190.0.128 | 255.255.255.128 | 0.0.0.127 | 192.190.0.255 |
-| 5 | A1 | 192.190.0.16 | 255.255.255.248 | 0.0.0.7 | 192.190.0.23 |
-| 6 | A8 | 192.190.0.24 | 255.255.255.248 | 0.0.0.7 | 192.190.0.31 |
-| 7 | A4 | 192.190.0.0 | 255.255.255.252 | 0.0.0.3 | 192.190.0.3 |
-| 8 | A5 | 192.190.0.4 | 255.255.255.252 | 0.0.0.3 | 192.190.0.7 |
+![](img/topo/subnet.png)
 
 ## Network Configuration
 
@@ -45,6 +25,7 @@ Pengerjaan soal shift jarkom modul 5 oleh ITA08
       ```
       auto eth0 
       iface eth0 inet dhcp
+      hwaddress ether da:d4:09:0a:bf:95
 
       auto eth1 #A4
       iface eth1 inet static
@@ -134,8 +115,8 @@ Pengerjaan soal shift jarkom modul 5 oleh ITA08
         netmask 255.255.255.248
         gateway 192.213.7.137
         ```
-## C. Routing
-       
+
+## C. Routing    
 Strix
 
 ```
@@ -159,9 +140,7 @@ route add -net 0.0.0.0 netmask 0.0.0.0 gw 192.213.7.149
 ```
 
 ## D. DHCP 
-
 ### DHCP Server
-
 **WISE adalah DHCP Server** Pada File > /etc/default/isc-dhcp-server
 	```
 	echo nameserver 192.168.122.1 > /etc/resolv.conf
@@ -181,6 +160,7 @@ route add -net 0.0.0.0 netmask 0.0.0.0 gw 192.213.7.149
 	max-lease-time 7200;
 	log-facility local7;
 
+    # Desmond (A3)
 	subnet 192.213.0.0 netmask 255.255.252.0 {
 	    range 192.213.0.2 192.213.3.254;
 	    option routers 192.213.0.1;
@@ -189,8 +169,8 @@ route add -net 0.0.0.0 netmask 0.0.0.0 gw 192.213.7.149
 	    default-lease-time 360;
 	    max-lease-time 7200;
 	}
-	```
-	```
+
+    # Forger (A2)
 	subnet 192.213.7.0 netmask 255.255.255.128 {
 	    range 192.213.7.2 192.213.7.126;
 	    option routers 192.213.7.1;
@@ -199,8 +179,8 @@ route add -net 0.0.0.0 netmask 0.0.0.0 gw 192.213.7.149
 	    default-lease-time 720;
 	    max-lease-time 7200;
 	}
-	```
-	```
+
+    # Blackbell (A6)
 	subnet 192.213.4.0 netmask 255.255.254.0 {
 	    range 192.213.4.2 192.213.5.254;
 	    option routers 192.213.4.1;
@@ -209,8 +189,8 @@ route add -net 0.0.0.0 netmask 0.0.0.0 gw 192.213.7.149
 	    default-lease-time 720;
 	    max-lease-time 7200;
 	}
-	```
-	```
+
+    # Briar (A7)
 	subnet 192.213.6.0 netmask 255.255.255.0 {
 	    range 192.213.6.2 192.213.6.254;
 	    option routers 192.213.6.1;
@@ -219,8 +199,6 @@ route add -net 0.0.0.0 netmask 0.0.0.0 gw 192.213.7.149
 	    default-lease-time 720;
 	    max-lease-time 7200;
 	}
-	```
-	```
 	subnet 192.213.7.128 netmask 255.255.255.248 {}
 	subnet 192.213.7.144 netmask 255.255.255.252 {}
 	subnet 192.213.7.148 netmask 255.255.255.252 {}
@@ -233,8 +211,8 @@ route add -net 0.0.0.0 netmask 0.0.0.0 gw 192.213.7.149
 ```
 service isc-dhcp-server restart
 ```
-### DHCP Relay
 
+### DHCP Relay
 **Ostania sebagai DHCP Relay** pada /etc/default/isc-dhcp-relay
 ```
 echo nameserver 192.168.122.1 > /etc/resolv.conf
@@ -268,7 +246,6 @@ service isc-dhcp-relay restart
 ```
 
 ### DNS Forwarder
-
 Pada **Eden** sebagai DNS Server, dilakukan instalasi Bind9
 
 ```
@@ -287,13 +264,28 @@ Agar topologi yang kalian buat dapat mengakses keluar, kalian diminta untuk meng
 
 pada **strix** 
 ```
-IPETH0="$(ip -br a | grep eth0 | awk '{print $NF}' | cut -d'/' -f1)"
-iptables -t nat -A POSTROUTING -o eth0 -j SNAT --to-source "$IPETH0" -s 192.213.0.0/21
-iptables -t nat -A POSTROUTING -o eth0 -j SNAT --to-source 192.168.122.215 -s 192.213.0.0/21
+iptables -t nat -A POSTROUTING -o eth0 -j SNAT --to-source 192.168.122.191 -s 192.213.0.0/21
 ```
 
 ### Testing
-`ping google.com/8.8.8.8`
+- Desmond
+  ![](img/soal_1/des.png)
+- Eden
+  ![](img/soal_1/eden.png)
+- Forger
+  ![](img/soal_1/for.png)
+- Garden
+  ![](img/soal_1/gar.png)
+- Ostania
+  ![](img/soal_1/ost.png)
+- SSS
+  ![](img/soal_1/sss.png)
+- Strix
+  ![](img/soal_1/strix.png)
+- Westalis
+  ![](img/soal_1/west.png)
+- WISE
+  ![](img/soal_1/wise.png)
 
 ## soal 2
 Drop semua TCP dan UDP pada DHCP Server
@@ -301,15 +293,15 @@ Drop semua TCP dan UDP pada DHCP Server
 Pada **Strix** dilakukan konfigurasi firewall sebagai berikut
 
 ```
-iptables -A FORWARD -p tcp -d 192.213.0.19 -i eth0 -j DROP # Drop semua TCP
-iptables -A FORWARD -p udp -d 192.213.0.19 -i eth0 -j DROP # Drop semua UDP
+iptables -A FORWARD -d 192.213.7.131 -i eth0 -p tcp -j DROP
+iptables -A FORWARD -d 192.213.7.131 -i eth0 -p udp -j DROP
 ```
 
 iptables di atas akan melalukan drop pada semua TCP dan UDP dengan tujuan **WISE** yang memiliki IP address `192.213.0.19`
 
 ### Testing
-
-`Ping google.com pada WISE setelah iptables`
+Ping google.com pada WISE setelah iptables
+![](img/soal_2/wise.png)
 
 ## soal 3
 Membatasi DHCP dan DNS Server hanya boleh menerima maksimal 2 koneksi ICMP secara bersamaan
@@ -321,7 +313,12 @@ iptables -A INPUT -p icmp -m connlimit --connlimit-above 2 --connlimit-mask 0 -j
 ```
 
 ### Testing 
-`ping Eden (192.213.0.18) sebagai DNS Server dengan 3 client`
+- SSS
+  ![](img/soal_3/sss.png)
+- Forger
+  ![](img/soal_3/forger.png)
+- Desmond
+  ![](img/soal_3/desmond.png)
 
 ## soal 4
 Akses menuju Web Server hanya diperbolehkan disaat jam kerja yaitu Senin sampai Jumat pada pukul 07.00 - 16.00
@@ -334,14 +331,18 @@ iptables -A INPUT -j REJECT
 ```
 
 ### Testing
+- Ping **Garden** pada jam kerja
+![](img/soal_4/garden_work.png)
 
-Ping **Garden** (192.213.0.27) pada jam kerja
+- Ping **Garden** pada hari libur
+![](img/soal_4/garden.png)
 
-[gambar]
+- Ping **SSS** pada jam kerja
+![](img/soal_4/sss_work.png)
 
-Ping **Garden** (192.213.0.27) pada hari libur
+- Ping **SSS** pada hari libur
+![](img/soal_4/sss.png)
 
-[gambar]
 
 ## soal 5
 Setiap request dari client yang mengakses Garden dengan port 80 akan didistribusikan secara bergantian pada SSS dan Garden secara berurutan dan request dari client yang mengakses SSS dengan port 443 akan didistribusikan secara bergantian pada Garden dan SSS secara berurutan
@@ -349,12 +350,19 @@ Setiap request dari client yang mengakses Garden dengan port 80 akan didistribus
 Pada **Ostania** dilakukan konfigurasi iptables sebagai berikut
 
 ```
-iptables -t nat -A PREROUTING -p tcp -d 192.190.0.27 --dport 80 -m statistic --mode nth --every 2 --packet 0 -j DNAT --to-destination 192.213.0.26:80
-iptables -t nat -A PREROUTING -p tcp -d 192.190.0.26 --dport 443 -m statistic --mode nth --every 2 --packet 0 -j DNAT --to-destination 192.213.0.27:443
+# SSS
+iptables -t nat -A PREROUTING -p tcp --dport 80 -m statistic --mode nth --every 2 --packet 0 -j DNAT --to-destination 192.190.7.139:80
+iptables -t nat -A PREROUTING -p tcp --dport 443 -m statistic --mode nth --every 1 --packet 0 -j DNAT --to-destination 192.190.7.139
+
+# Garden
+iptables -t nat -A PREROUTING -p tcp --dport 80 -m statistic --mode nth --every 1 --packet 0 -j DNAT --to-destination 192.190.7.138
+iptables -t nat -A PREROUTING -p tcp --dport 443 -m statistic --mode nth --every 2 --packet 0 -j DNAT --to-destination 192.190.7.138
 ```
 
 ## soal 6
 Logging paket yang di-drop dengan standard syslog level
+
+Pada **Setiap Router** dilakukan konfigurasi iptables sebagai berikut
 
 ```
 iptables -N LOGGING
