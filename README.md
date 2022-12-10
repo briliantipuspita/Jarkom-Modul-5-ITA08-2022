@@ -162,72 +162,72 @@ route add -net 0.0.0.0 netmask 0.0.0.0 gw 192.213.7.149
 
 ### DHCP Server
 
-* WISE adalah DHCP Server * Pada File > /etc/default/isc-dhcp-server
+**WISE adalah DHCP Server** Pada File > /etc/default/isc-dhcp-server
 	```
 	echo nameserver 192.168.122.1 > /etc/resolv.conf
 	apt update
 	apt install isc-dhcp-server -y
+	
+	echo "
+	INTERFACES=\"eth0\"
+	" > /etc/default/isc-dhcp-server
+
+	Pada File > /etc/dhcp/dhcpd.conf
+	echo "
+	ddns-update-style none;
+	option domain-name \"example.org\";
+	option domain-name-servers ns1.example.org, ns2.example.org;
+	default-lease-time 600;
+	max-lease-time 7200;
+	log-facility local7;
+
+	subnet 192.213.0.0 netmask 255.255.252.0 {
+	    range 192.213.0.2 192.213.3.254;
+	    option routers 192.213.0.1;
+	    option broadcast-address 192.213.3.255;
+	    option domain-name-servers 192.213.7.130;
+	    default-lease-time 360;
+	    max-lease-time 7200;
+	}
 	```
-echo "
-INTERFACES=\"eth0\"
-" > /etc/default/isc-dhcp-server
-
-Pada File > /etc/dhcp/dhcpd.conf
-echo "
-ddns-update-style none;
-option domain-name \"example.org\";
-option domain-name-servers ns1.example.org, ns2.example.org;
-default-lease-time 600;
-max-lease-time 7200;
-log-facility local7;
-
-```
-subnet 192.213.0.0 netmask 255.255.252.0 {
-    range 192.213.0.2 192.213.3.254;
-    option routers 192.213.0.1;
-    option broadcast-address 192.213.3.255;
-    option domain-name-servers 192.213.7.130;
-    default-lease-time 360;
-    max-lease-time 7200;
-}
-```
-```
-subnet 192.213.7.0 netmask 255.255.255.128 {
-    range 192.213.7.2 192.213.7.126;
-    option routers 192.213.7.1;
-    option broadcast-address 192.213.7.127;
-    option domain-name-servers 192.213.7.130;
-    default-lease-time 720;
-    max-lease-time 7200;
-}
-```
-```
-subnet 192.213.4.0 netmask 255.255.254.0 {
-    range 192.213.4.2 192.213.5.254;
-    option routers 192.213.4.1;
-    option broadcast-address 192.213.5.255;
-    option domain-name-servers 192.213.7.130;
-    default-lease-time 720;
-    max-lease-time 7200;
-}
-```
-```
-subnet 192.213.6.0 netmask 255.255.255.0 {
-    range 192.213.6.2 192.213.6.254;
-    option routers 192.213.6.1;
-    option broadcast-address 192.213.6.255;
-    option domain-name-servers 192.213.7.130;
-    default-lease-time 720;
-    max-lease-time 7200;
-}
-```
-```
-subnet 192.213.7.128 netmask 255.255.255.248 {}
-subnet 192.213.7.144 netmask 255.255.255.252 {}
-subnet 192.213.7.148 netmask 255.255.255.252 {}
-subnet 192.213.7.136 netmask 255.255.255.248 {}
-```
-" > /etc/dhcp/dhcpd.conf
+	```
+	subnet 192.213.7.0 netmask 255.255.255.128 {
+	    range 192.213.7.2 192.213.7.126;
+	    option routers 192.213.7.1;
+	    option broadcast-address 192.213.7.127;
+	    option domain-name-servers 192.213.7.130;
+	    default-lease-time 720;
+	    max-lease-time 7200;
+	}
+	```
+	```
+	subnet 192.213.4.0 netmask 255.255.254.0 {
+	    range 192.213.4.2 192.213.5.254;
+	    option routers 192.213.4.1;
+	    option broadcast-address 192.213.5.255;
+	    option domain-name-servers 192.213.7.130;
+	    default-lease-time 720;
+	    max-lease-time 7200;
+	}
+	```
+	```
+	subnet 192.213.6.0 netmask 255.255.255.0 {
+	    range 192.213.6.2 192.213.6.254;
+	    option routers 192.213.6.1;
+	    option broadcast-address 192.213.6.255;
+	    option domain-name-servers 192.213.7.130;
+	    default-lease-time 720;
+	    max-lease-time 7200;
+	}
+	```
+	```
+	subnet 192.213.7.128 netmask 255.255.255.248 {}
+	subnet 192.213.7.144 netmask 255.255.255.252 {}
+	subnet 192.213.7.148 netmask 255.255.255.252 {}
+	subnet 192.213.7.136 netmask 255.255.255.248 {}
+	
+	" > /etc/dhcp/dhcpd.conf
+	```
 
 **jalankan DHCP Server**
 ```
