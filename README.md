@@ -57,7 +57,7 @@ Pengerjaan soal shift jarkom modul 5 oleh ITA08
       netmask 255.255.255.
 
       ```
-     - Westalis
+   - Westalis
       ```
       auto eth0 #A4
       iface eth0 inet static
@@ -265,4 +265,100 @@ OPTIONS=\"\"
 **jalankan DHCP Relay** 
 ```
 service isc-dhcp-relay restart
+```
+
+### DNS Forwarder
+
+Pada **Eden** sebagai DNS Server, dilakukan instalasi Bind9
+
+```
+echo nameserver 192.168.122.1 > /etc/resolv.conf
+apt-get update
+apt-get install bind9 -y
+service bind9 start
+```
+
+**Setelah itu restart bind9 dengan**
+
+`service bind9 restart`
+
+## soal 1
+Agar topologi yang kalian buat dapat mengakses keluar, kalian diminta untuk mengkonfigurasi Strix menggunakan iptables, tetapi Loid tidak ingin menggunakan MASQUERADE.
+
+pada **strix** 
+```
+IPETH0="$(ip -br a | grep eth0 | awk '{print $NF}' | cut -d'/' -f1)"
+iptables -t nat -A POSTROUTING -o eth0 -j SNAT --to-source "$IPETH0" -s 192.213.0.0/21
+iptables -t nat -A POSTROUTING -o eth0 -j SNAT --to-source 192.168.122.215 -s 192.213.0.0/21
+```
+
+### Testing
+`ping google.com/8.8.8.8`
+
+## soal 2
+Drop semua TCP dan UDP pada DHCP Server
+
+Pada **Strix** dilakukan konfigurasi firewall sebagai berikut
+
+```
+iptables -A FORWARD -p tcp -d 192.213.0.19 -i eth0 -j DROP # Drop semua TCP
+iptables -A FORWARD -p udp -d 192.213.0.19 -i eth0 -j DROP # Drop semua UDP
+```
+
+iptables di atas akan melalukan drop pada semua TCP dan UDP dengan tujuan **WISE** yang memiliki IP address `192.213.0.19`
+
+### Testing
+
+`Ping google.com pada WISE setelah iptables`
+
+## soal 3
+Membatasi DHCP dan DNS Server hanya boleh menerima maksimal 2 koneksi ICMP secara bersamaan
+
+Limit koneksi ICMP dengan iptables pada **WISE** sebagai DHCP Server dan **Eden** sebagai DNS Server
+
+```
+iptables -A INPUT -p icmp -m connlimit --connlimit-above 2 --connlimit-mask 0 -j DROP
+```
+
+### Testing 
+`ping Eden (192.213.0.18) sebagai DNS Server dengan 3 client`
+
+## soal 4
+Akses menuju Web Server hanya diperbolehkan disaat jam kerja yaitu Senin sampai Jumat pada pukul 07.00 - 16.00
+
+Pada **Garden** dan **SSS** sebagai Web Server, dibuat firewall sebagai berikut
+
+```
+iptables -A INPUT -m time --timestart 07:00 --timestop 16:00 --weekdays Mon,Tue,Wed,Thu,Fri -j ACCEPT
+iptables -A INPUT -j REJECT
+```
+
+### Testing
+
+Ping **Garden** (192.213.0.27) pada jam kerja
+
+[gambar]
+
+Ping **Garden** (192.213.0.27) pada hari libur
+
+[gambar]
+
+## soal 5
+Setiap request dari client yang mengakses Garden dengan port 80 akan didistribusikan secara bergantian pada SSS dan Garden secara berurutan dan request dari client yang mengakses SSS dengan port 443 akan didistribusikan secara bergantian pada Garden dan SSS secara berurutan
+
+Pada **Ostania** dilakukan konfigurasi iptables sebagai berikut
+
+```
+iptables -t nat -A PREROUTING -p tcp -d 192.190.0.27 --dport 80 -m statistic --mode nth --every 2 --packet 0 -j DNAT --to-destination 192.213.0.26:80
+iptables -t nat -A PREROUTING -p tcp -d 192.190.0.26 --dport 443 -m statistic --mode nth --every 2 --packet 0 -j DNAT --to-destination 192.213.0.27:443
+```
+
+## soal 6
+Logging paket yang di-drop dengan standard syslog level
+
+```
+iptables -N LOGGING
+iptables -A INPUT -j LOGGING
+iptables -A LOGGING -j LOG --log-prefix "IPTables-Dropped: " --log-level 4
+iptables -A LOGGING -j DROP
 ```
